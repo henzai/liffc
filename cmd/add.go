@@ -1,4 +1,4 @@
-// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2018 henzai ry0chord@gmail.com
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,11 @@
 package cmd
 
 import (
+	"fmt"
 	"log"
 	"os"
 
-	"github.com/henzai/liffc/api"
+	"github.com/henzai/liffc/liff"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -31,7 +32,7 @@ const (
 // addCmd represents the add command
 var addCmd = &cobra.Command{
 	Use:   "add",
-	Short: "A brief description of your command",
+	Short: "Add LIFF app",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -48,43 +49,41 @@ to quickly create a Cobra application.`,
 			cmd.Println("Bad argumentes. i.e. >liffctl add URL")
 			os.Exit(1)
 		}
-		c := api.NewClient(lineAccessToken)
+		c := liff.NewClient(lineAccessToken)
 
-		ble, err := cmd.Flags().GetBool("ble")
+		ble, err := cmd.PersistentFlags().GetBool("ble")
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		description, err := cmd.Flags().GetString("description")
+		description, err := cmd.PersistentFlags().GetString("description")
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		liffType, err := cmd.Flags().GetString("type")
+		liffType, err := cmd.PersistentFlags().GetString("type")
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		addOption := api.NewAddOption(description, liffType, args[0], ble)
-		err = c.Add(addOption)
+		appOption, err := liff.NewAppOption(description, liffType, args[0], ble)
 		if err != nil {
 			cmd.Println(err)
 			os.Exit(1)
 		}
+
+		liffID, err := c.Add(appOption)
+		if err != nil {
+			cmd.Println(err)
+			os.Exit(1)
+		}
+		fmt.Println(liffID.LiffID)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(addCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	addCmd.Flags().StringP("description", "d", "", "A help for foo")
-	addCmd.Flags().StringP("type", "t", "full", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	addCmd.Flags().BoolP("ble", "b", false, "Help message for toggle")
+	addCmd.PersistentFlags().StringP("description", "d", "", "you can descript about its LIFF app")
+	addCmd.PersistentFlags().StringP("type", "t", "full", "size of LIFF app. you can select full|tall|compact")
+	addCmd.PersistentFlags().BoolP("ble", "b", false, "enable LINE Things")
 }

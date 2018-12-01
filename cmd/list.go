@@ -1,4 +1,4 @@
-// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2018 henzai ry0chord@gmail.com
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,15 +17,16 @@ package cmd
 import (
 	"os"
 
-	"github.com/henzai/liffc/api"
+	"github.com/henzai/liffc/liff"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/olekukonko/tablewriter"
 )
 
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "A brief description of your command",
+	Short: "List LIFF apps",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -38,25 +39,22 @@ to quickly create a Cobra application.`,
 			cmd.Println(NO_LINE_ACCESS_TOKEN)
 			os.Exit(1)
 		}
-		c := api.NewClient(lineAccessToken)
-		err := c.List()
+		c := liff.NewClient(lineAccessToken)
+		apps, err := c.List()
 		if err != nil {
 			cmd.Println(err)
 			os.Exit(1)
 		}
+		data := apps.StringArray()
+		table := tablewriter.NewWriter(cmd.OutOrStdout())
+		table.SetHeader([]string{"liffId", "description", "type", "url", "ble"})
+		for _, v := range data {
+			table.Append(v)
+		}
+		table.Render()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(listCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// listCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

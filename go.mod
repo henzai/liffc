@@ -2,7 +2,9 @@ module github.com/henzai/liffc
 
 require (
 	github.com/joho/godotenv v1.3.0
+	github.com/mattn/go-runewidth v0.0.3 // indirect
 	github.com/mitchellh/go-homedir v1.0.0
+	github.com/olekukonko/tablewriter v0.0.1
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/viper v1.2.1
 )

@@ -1,4 +1,4 @@
-// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2018 henzai ry0chord@gmail.com
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,15 +15,17 @@
 package cmd
 
 import (
-	"fmt"
+	"os"
 
+	"github.com/henzai/liffc/liff"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // sendCmd represents the send command
 var sendCmd = &cobra.Command{
 	Use:   "send",
-	Short: "A brief description of your command",
+	Short: "Send message to userID",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -31,20 +33,27 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("send called")
+		lineAccessToken := viper.GetString("line_access_token")
+		if lineAccessToken == "" {
+			cmd.Println(NO_LINE_ACCESS_TOKEN)
+			os.Exit(1)
+		}
+		if len(args) == 0 {
+			cmd.Println("Bad argumentes. i.e. >liffctl add URL")
+			os.Exit(1)
+		}
+		c := liff.NewClient(lineAccessToken)
+		liffID := args[0]
+		userID := args[1]
+		message := liff.NewPushMessage(liffID, userID)
+		err := c.Send(message)
+		if err != nil {
+			cmd.Println(err)
+		}
+		return
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(sendCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// sendCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// sendCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

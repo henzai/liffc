@@ -1,4 +1,4 @@
-// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2018 henzai ry0chord@gmail.com
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,14 +16,18 @@ package cmd
 
 import (
 	"fmt"
+	"log"
+	"os"
 
+	"github.com/henzai/liffc/liff"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "A brief description of your command",
+	Short: "Update LIFF app",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -31,20 +35,50 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("update called")
+		lineAccessToken := viper.GetString("line_access_token")
+		if lineAccessToken == "" {
+			cmd.Println(NO_LINE_ACCESS_TOKEN)
+			os.Exit(1)
+		}
+		if len(args) == 0 {
+			cmd.Println("Bad argumentes. i.e. >liffc update liffId")
+			os.Exit(1)
+		}
+		c := liff.NewClient(lineAccessToken)
+
+		ble, err := cmd.PersistentFlags().GetBool("ble")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		description, err := cmd.PersistentFlags().GetString("description")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		liffType, err := cmd.PersistentFlags().GetString("type")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		appOption, err := liff.NewAppOption(description, liffType, args[1], ble)
+		if err != nil {
+			cmd.Println(err)
+			os.Exit(1)
+		}
+		liffID := args[0]
+		err = c.Update(liffID, appOption)
+		if err != nil {
+			cmd.Println(err)
+			os.Exit(1)
+		}
+		fmt.Printf("liffId: %v update succeeded!\n", liffID)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(updateCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// updateCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// updateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	updateCmd.PersistentFlags().StringP("description", "d", "", "you can descript about its LIFF app")
+	updateCmd.PersistentFlags().StringP("type", "t", "full", "size of LIFF app. you can select full|tall|compact")
+	updateCmd.PersistentFlags().BoolP("ble", "b", false, "enable LINE Things")
 }

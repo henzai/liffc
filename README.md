@@ -1,3 +1,3 @@
 # LIFFc
 
-LIFF CLI using Golang.
+LIFF CLI in Go.
