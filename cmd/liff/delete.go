@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package liff
 
 import (
+	"bufio"
 	"os"
 
 	"github.com/henzai/liffc/api"
@@ -22,10 +23,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-// sendCmd represents the send command
-var sendCmd = &cobra.Command{
-	Use:   "send",
-	Short: "Send message to userID",
+// deleteCmd represents the delete command
+var deleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete specify LIFF app.",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -36,24 +37,61 @@ to quickly create a Cobra application.`,
 		lineAccessToken := viper.GetString("line_access_token")
 		if lineAccessToken == "" {
 			cmd.Println(NO_LINE_ACCESS_TOKEN)
-			os.Exit(1)
+			return
+		}
+		if all, _ := cmd.PersistentFlags().GetBool("all"); all {
+			err := deleteAll(lineAccessToken)
+			if err != nil {
+				cmd.Println(err)
+			}
+			return
 		}
 		if len(args) == 0 {
 			cmd.Println("Bad argumentes. i.e. >liffctl add URL")
-			os.Exit(1)
+			return
 		}
-		c := api.NewClient(lineAccessToken)
 		liffID := args[0]
-		userID := args[1]
-		message := c.LIFF.NewPushMessage(liffID, userID)
-		err := c.LIFF.Send(message)
+		c := api.NewClient(lineAccessToken)
+		err := c.LIFF.Delete(liffID)
 		if err != nil {
 			cmd.Println(err)
+			return
 		}
-		return
+		cmd.Printf("[LIFF ID] %v has been deleted\n", liffID)
 	},
 }
 
 func init() {
-	liffCmd.AddCommand(sendCmd)
+	deleteCmd.PersistentFlags().BoolP("all", "a", false, "delete all")
+}
+
+func NewDeleteCommand() *cobra.Command {
+	return deleteCmd
+}
+
+func deleteAll(token string) error {
+	c := api.NewClient(token)
+	apps, err := c.LIFF.List()
+	if err != nil {
+		return err
+	}
+	for _, app := range apps.Apps {
+		err = c.LIFF.Delete(app.LiffID)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func Gets() (lines []string) {
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		str := scanner.Text()
+		if str == "" {
+			break
+		}
+		lines = append(lines, str)
+	}
+	return
 }

@@ -17,6 +17,8 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/henzai/liffc/cmd/things"
+
 	"github.com/spf13/cobra"
 )
 
@@ -32,19 +34,12 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("things called")
+
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(thingsCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// thingsCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// thingsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	thingsCmd.AddCommand(things.NewGetCommand())
+	thingsCmd.AddCommand(things.NewTrialCommand())
 }

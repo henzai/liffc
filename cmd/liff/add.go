@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package liff
 
 import (
 	"fmt"
@@ -20,14 +20,19 @@ import (
 	"os"
 
 	"github.com/henzai/liffc/api"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-// updateCmd represents the update command
-var updateCmd = &cobra.Command{
-	Use:   "update",
-	Short: "Update LIFF app",
+const (
+	NO_LINE_ACCESS_TOKEN = "Error: set environment variable following command. \n$ liffctl init {LINE_ACCESS_TOKEN}"
+)
+
+// addCmd represents the add command
+var addCmd = &cobra.Command{
+	Use:   "add",
+	Short: "Add LIFF app",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -41,7 +46,7 @@ to quickly create a Cobra application.`,
 			os.Exit(1)
 		}
 		if len(args) == 0 {
-			cmd.Println("Bad argumentes. i.e. >liffc update liffId")
+			cmd.Println("Bad argumentes. i.e. >liffctl add URL")
 			os.Exit(1)
 		}
 		c := api.NewClient(lineAccessToken)
@@ -61,24 +66,27 @@ to quickly create a Cobra application.`,
 			log.Fatal(err)
 		}
 
-		appOption, err := c.LIFF.NewAppOption(description, liffType, args[1], ble)
+		appOption, err := c.LIFF.NewAppOption(description, liffType, args[0], ble)
 		if err != nil {
 			cmd.Println(err)
 			os.Exit(1)
 		}
-		liffID := args[0]
-		err = c.LIFF.Update(liffID, appOption)
+
+		liffID, err := c.LIFF.Add(appOption)
 		if err != nil {
 			cmd.Println(err)
 			os.Exit(1)
 		}
-		fmt.Printf("liffId: %v update succeeded!\n", liffID)
+		fmt.Println(liffID.LiffID)
 	},
 }
 
 func init() {
-	liffCmd.AddCommand(updateCmd)
-	updateCmd.PersistentFlags().StringP("description", "d", "", "you can descript about its LIFF app")
-	updateCmd.PersistentFlags().StringP("type", "t", "full", "size of LIFF app. you can select full|tall|compact")
-	updateCmd.PersistentFlags().BoolP("ble", "b", false, "enable LINE Things")
+	addCmd.PersistentFlags().StringP("description", "d", "", "you can descript about its LIFF app")
+	addCmd.PersistentFlags().StringP("type", "t", "full", "size of LIFF app. you can select full|tall|compact")
+	addCmd.PersistentFlags().BoolP("ble", "b", false, "enable LINE Things")
+}
+
+func NewAddCommand() *cobra.Command {
+	return addCmd
 }

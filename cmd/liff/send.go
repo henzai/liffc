@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package liff
 
 import (
 	"os"
@@ -20,13 +20,12 @@ import (
 	"github.com/henzai/liffc/api"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/olekukonko/tablewriter"
 )
 
-// listCmd represents the list command
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List LIFF apps",
+// sendCmd represents the send command
+var sendCmd = &cobra.Command{
+	Use:   "send",
+	Short: "Send message to userID",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -39,22 +38,25 @@ to quickly create a Cobra application.`,
 			cmd.Println(NO_LINE_ACCESS_TOKEN)
 			os.Exit(1)
 		}
-		c := api.NewClient(lineAccessToken)
-		apps, err := c.LIFF.List()
-		if err != nil {
-			cmd.Println(err)
+		if len(args) == 0 {
+			cmd.Println("Bad argumentes. i.e. >liffctl add URL")
 			os.Exit(1)
 		}
-		data := apps.StringArray()
-		table := tablewriter.NewWriter(cmd.OutOrStdout())
-		table.SetHeader([]string{"liffId", "description", "type", "url", "ble"})
-		for _, v := range data {
-			table.Append(v)
+		c := api.NewClient(lineAccessToken)
+		liffID := args[0]
+		userID := args[1]
+		message := c.LIFF.NewPushMessage(liffID, userID)
+		err := c.LIFF.Send(message)
+		if err != nil {
+			cmd.Println(err)
 		}
-		table.Render()
+		return
 	},
 }
 
 func init() {
-	liffCmd.AddCommand(listCmd)
+}
+
+func NewSendCommand() *cobra.Command {
+	return sendCmd
 }

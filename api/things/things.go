@@ -20,7 +20,7 @@ func (tc *ThingsClient) GetUserLinkedDevice(deviceID, userID string) (*UserDevic
 	return nil, nil
 }
 
-func (tc *ThingsClient) GetProductLinkedDevices(deviceID, userID string) (*UserDevices, error) {
+func (tc *ThingsClient) GetProductLinkedDevices(productID, userID string) (*UserDevices, error) {
 	return nil, nil
 }
 

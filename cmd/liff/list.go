@@ -12,19 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package liff
 
 import (
-	"fmt"
 	"os"
 
+	"github.com/henzai/liffc/api"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"github.com/olekukonko/tablewriter"
 )
 
-// initCmd represents the init command
-var initCmd = &cobra.Command{
-	Use:   "init",
-	Short: "Init liffc. generate dotenv file",
+// listCmd represents the list command
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List LIFF apps",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -32,24 +34,30 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			fmt.Println("Bad argumentes. i.e. >liff init $LINE_ACCESS_TOKEN")
+		lineAccessToken := viper.GetString("line_access_token")
+		if lineAccessToken == "" {
+			cmd.Println(NO_LINE_ACCESS_TOKEN)
+			os.Exit(1)
 		}
-
-		lineAccessToken := args[0]
-		file, err := os.Create(`.env`)
+		c := api.NewClient(lineAccessToken)
+		apps, err := c.LIFF.List()
 		if err != nil {
-			panic(err)
+			cmd.Println(err)
+			os.Exit(1)
 		}
-		defer file.Close()
-		data := []byte(fmt.Sprintf("LINE_ACCESS_TOKEN=%v", lineAccessToken))
-		_, err = file.Write(data)
-		if err != nil {
-			panic(err)
+		data := apps.StringArray()
+		table := tablewriter.NewWriter(cmd.OutOrStdout())
+		table.SetHeader([]string{"liffId", "description", "type", "url", "ble"})
+		for _, v := range data {
+			table.Append(v)
 		}
+		table.Render()
 	},
 }
 
 func init() {
-	liffCmd.AddCommand(initCmd)
+}
+
+func NewListCommand() *cobra.Command {
+	return listCmd
 }
