@@ -42,11 +42,11 @@ to quickly create a Cobra application.`,
 			cmd.Println("Bad argumentes. i.e. >liffctl add URL")
 			os.Exit(1)
 		}
-		c := liff.NewClient(lineAccessToken)
+		c := api.NewClient(lineAccessToken)
 		liffID := args[0]
 		userID := args[1]
-		message := liff.NewPushMessage(liffID, userID)
-		err := c.Send(message)
+		message := c.LIFF.NewPushMessage(liffID, userID)
+		err := c.LIFF.Send(message)
 		if err != nil {
 			cmd.Println(err)
 		}

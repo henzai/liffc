@@ -44,7 +44,7 @@ to quickly create a Cobra application.`,
 			cmd.Println("Bad argumentes. i.e. >liffc update liffId")
 			os.Exit(1)
 		}
-		c := liff.NewClient(lineAccessToken)
+		c := api.NewClient(lineAccessToken)
 
 		ble, err := cmd.PersistentFlags().GetBool("ble")
 		if err != nil {
@@ -61,13 +61,13 @@ to quickly create a Cobra application.`,
 			log.Fatal(err)
 		}
 
-		appOption, err := liff.NewAppOption(description, liffType, args[1], ble)
+		appOption, err := c.LIFF.NewAppOption(description, liffType, args[1], ble)
 		if err != nil {
 			cmd.Println(err)
 			os.Exit(1)
 		}
 		liffID := args[0]
-		err = c.Update(liffID, appOption)
+		err = c.LIFF.Update(liffID, appOption)
 		if err != nil {
 			cmd.Println(err)
 			os.Exit(1)

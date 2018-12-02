@@ -48,8 +48,8 @@ to quickly create a Cobra application.`,
 			return
 		}
 		liffID := args[0]
-		c := liff.NewClient(lineAccessToken)
-		err := c.Delete(liffID)
+		c := api.NewClient(lineAccessToken)
+		err := c.LIFF.Delete(liffID)
 		if err != nil {
 			cmd.Println(err)
 			return
@@ -64,13 +64,13 @@ func init() {
 }
 
 func deleteAll(token string) error {
-	c := liff.NewClient(token)
-	apps, err := c.List()
+	c := api.NewClient(token)
+	apps, err := c.LIFF.List()
 	if err != nil {
 		return err
 	}
 	for _, app := range apps.Apps {
-		err = c.Delete(app.LiffID)
+		err = c.LIFF.Delete(app.LiffID)
 		if err != nil {
 			return err
 		}

@@ -1,4 +1,4 @@
-package api
+package liff
 
 import (
 	"strconv"
@@ -43,7 +43,7 @@ func (apps *Apps) StringArray() [][]string {
 	return s
 }
 
-func NewAppOption(description, liffType, liffURL string, ble bool) (*AppOption, error) {
+func (_ LIFFClient) NewAppOption(description, liffType, liffURL string, ble bool) (*AppOption, error) {
 	viewType, err := NewViewType(liffType)
 	if err != nil {
 		return nil, err

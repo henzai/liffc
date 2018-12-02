@@ -66,13 +66,13 @@ to quickly create a Cobra application.`,
 			log.Fatal(err)
 		}
 
-		appOption, err := api.NewAppOption(description, liffType, args[0], ble)
+		appOption, err := c.LIFF.NewAppOption(description, liffType, args[0], ble)
 		if err != nil {
 			cmd.Println(err)
 			os.Exit(1)
 		}
 
-		liffID, err := c.Add(appOption)
+		liffID, err := c.LIFF.Add(appOption)
 		if err != nil {
 			cmd.Println(err)
 			os.Exit(1)

@@ -39,8 +39,8 @@ to quickly create a Cobra application.`,
 			cmd.Println(NO_LINE_ACCESS_TOKEN)
 			os.Exit(1)
 		}
-		c := liff.NewClient(lineAccessToken)
-		apps, err := c.List()
+		c := api.NewClient(lineAccessToken)
+		apps, err := c.LIFF.List()
 		if err != nil {
 			cmd.Println(err)
 			os.Exit(1)

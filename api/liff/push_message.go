@@ -1,4 +1,4 @@
-package api
+package liff
 
 import "fmt"
 
@@ -12,7 +12,7 @@ type Message struct {
 	Text string `json:"text"`
 }
 
-func NewPushMessage(liffID, userID string) *PushMessage {
+func (_ LIFFClient) NewPushMessage(liffID, userID string) *PushMessage {
 	return &PushMessage{
 		To: userID,
 		Messages: []Message{

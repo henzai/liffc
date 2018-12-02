@@ -1,24 +1,35 @@
-package api
+package liff
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+
+	"github.com/henzai/liffc/api/util"
 )
 
 const (
+	baseURL = "https://api.line.me/liff/v1/apps"
 	pushURL = "https://api.line.me/v2/bot/message/push"
 )
 
-type LiffIDResponse struct {
-	LiffID string `json:"liffId"`
+type LIFFClient struct {
+	lineAccessToken string
 }
 
-func (c *Client) Add(option *AppOption) (*LiffIDResponse, error) {
+func NewLIFFClient(token string) *LIFFClient {
+	return &LIFFClient{token}
+}
+
+func (liff *LIFFClient) GetLineAccessToken() string {
+	return liff.lineAccessToken
+}
+
+func (liff *LIFFClient) Add(option *AppOption) (*LIFFIDResponse, error) {
 	form, err := json.Marshal(option)
 	//fmt.Println(string(form))
-	resp, err := c.request("POST", baseURL, bytes.NewBuffer(form))
+	resp, err := util.Request(liff, "POST", baseURL, bytes.NewBuffer(form))
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
@@ -34,7 +45,7 @@ func (c *Client) Add(option *AppOption) (*LiffIDResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var liffIDResponse LiffIDResponse
+	var liffIDResponse LIFFIDResponse
 	err = json.Unmarshal(body, &liffIDResponse)
 	if err != nil {
 		return nil, err
@@ -42,9 +53,9 @@ func (c *Client) Add(option *AppOption) (*LiffIDResponse, error) {
 	return &liffIDResponse, nil
 }
 
-func (c *Client) Delete(liffID string) error {
+func (liff *LIFFClient) Delete(liffID string) error {
 
-	resp, err := c.request("DELETE", fmt.Sprintf("%v/%v", baseURL, liffID), nil)
+	resp, err := util.Request(liff, "DELETE", fmt.Sprintf("%v/%v", baseURL, liffID), nil)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -53,9 +64,9 @@ func (c *Client) Delete(liffID string) error {
 	return nil
 }
 
-func (c *Client) List() (*Apps, error) {
+func (liff *LIFFClient) List() (*Apps, error) {
 
-	resp, err := c.request("GET", baseURL, nil)
+	resp, err := util.Request(liff, "GET", baseURL, nil)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
@@ -73,10 +84,10 @@ func (c *Client) List() (*Apps, error) {
 	return &apps, nil
 }
 
-func (c *Client) Send(pushMessage *PushMessage) error {
+func (liff *LIFFClient) Send(pushMessage *PushMessage) error {
 	form, err := json.Marshal(pushMessage)
 
-	resp, err := c.request("POST", pushURL, bytes.NewBuffer(form))
+	resp, err := util.Request(liff, "POST", pushURL, bytes.NewBuffer(form))
 	if err != nil {
 		return err
 	}
@@ -93,9 +104,9 @@ func (c *Client) Send(pushMessage *PushMessage) error {
 	return nil
 }
 
-func (c *Client) Update(liffID string, option *AppOption) error {
+func (liff *LIFFClient) Update(liffID string, option *AppOption) error {
 	form, err := json.Marshal(option)
-	resp, err := c.request("PUT", fmt.Sprintf("%v/%v", baseURL, liffID), bytes.NewBuffer(form))
+	resp, err := util.Request(liff, "PUT", fmt.Sprintf("%v/%v", baseURL, liffID), bytes.NewBuffer(form))
 	if err != nil {
 		fmt.Println(err)
 		return err
