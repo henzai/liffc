@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package liff
+package cmd
 
 import (
 	"fmt"
@@ -51,8 +51,5 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-}
-
-func NewInitCommand() *cobra.Command {
-	return initCmd
+	rootCmd.AddCommand(initCmd)
 }

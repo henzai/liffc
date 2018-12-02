@@ -41,7 +41,6 @@ func init() {
 	rootCmd.AddCommand(liffCmd)
 	liffCmd.AddCommand(liff.NewAddCommand())
 	liffCmd.AddCommand(liff.NewDeleteCommand())
-	liffCmd.AddCommand(liff.NewInitCommand())
 	liffCmd.AddCommand(liff.NewListCommand())
 	liffCmd.AddCommand(liff.NewSendCommand())
 	liffCmd.AddCommand(liff.NewUpdateCommand())

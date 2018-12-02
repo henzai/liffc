@@ -1,25 +1,33 @@
-# LIFFc
+# linectl
 
-LIFF CLI in Go.
+LINE LIFF, Things CLI tools in Go
 
+## usage
 
 ```bash
+# init
+linectl init (LINE_ACCESS_TOKEN)
 
+# add liff app
+linectl liff add (URL)
+# --description(-d) is remark of liff app
+linectl liff add --description hoge (URL)
+# --type(-t) full|tall|compact
+linectl liff add --type tall (URL)
+# --ble(-b) enable LINE Things
+linectl liff add --ble (URL)
 
-liffc things get device
-liffc things add trial
-liffc things remove trial
-liffc things list  trial
+# delete liff app
+linectl liff delete (LIFFID)
+# delete all liff apps
+linectl liff delete --all
 
-liffc things add --trial --name name liffID
-liffc things remove --trial productID
-liffc things list --trial
+# list all liff apps
+linectl liff list
 
-liffc things trial add --name name liffID
-liffc things trial remove productID
-liffc things trial list
+# update liff app
+linectl liff update (LIFFID) (URL)
 
-liffc things get deviceID
-liffc things get --user userID deviceID
-liffc things get --project projectID -user userID
+# send liff app URL to LINE
+linectl liff send (LIFFID) (userID)
 ```

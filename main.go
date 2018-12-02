@@ -14,7 +14,7 @@
 
 package main
 
-import "github.com/henzai/liffc/cmd"
+import "github.com/henzai/linectl/cmd"
 
 func main() {
 	cmd.Execute()
