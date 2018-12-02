@@ -19,7 +19,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/henzai/liffc/liff"
+	"github.com/henzai/liffc/api"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -49,7 +49,7 @@ to quickly create a Cobra application.`,
 			cmd.Println("Bad argumentes. i.e. >liffctl add URL")
 			os.Exit(1)
 		}
-		c := liff.NewClient(lineAccessToken)
+		c := api.NewClient(lineAccessToken)
 
 		ble, err := cmd.PersistentFlags().GetBool("ble")
 		if err != nil {
@@ -66,7 +66,7 @@ to quickly create a Cobra application.`,
 			log.Fatal(err)
 		}
 
-		appOption, err := liff.NewAppOption(description, liffType, args[0], ble)
+		appOption, err := api.NewAppOption(description, liffType, args[0], ble)
 		if err != nil {
 			cmd.Println(err)
 			os.Exit(1)
@@ -82,7 +82,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	rootCmd.AddCommand(addCmd)
+	liffCmd.AddCommand(addCmd)
 	addCmd.PersistentFlags().StringP("description", "d", "", "you can descript about its LIFF app")
 	addCmd.PersistentFlags().StringP("type", "t", "full", "size of LIFF app. you can select full|tall|compact")
 	addCmd.PersistentFlags().BoolP("ble", "b", false, "enable LINE Things")

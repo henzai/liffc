@@ -17,7 +17,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/henzai/liffc/liff"
+	"github.com/henzai/liffc/api"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -55,5 +55,5 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	rootCmd.AddCommand(sendCmd)
+	liffCmd.AddCommand(sendCmd)
 }

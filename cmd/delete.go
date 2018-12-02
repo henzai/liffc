@@ -15,7 +15,7 @@
 package cmd
 
 import (
-	"github.com/henzai/liffc/liff"
+	"github.com/henzai/liffc/api"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -59,7 +59,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	rootCmd.AddCommand(deleteCmd)
+	liffCmd.AddCommand(deleteCmd)
 	deleteCmd.PersistentFlags().BoolP("all", "a", false, "delete all")
 }
 

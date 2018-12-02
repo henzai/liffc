@@ -19,7 +19,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/henzai/liffc/liff"
+	"github.com/henzai/liffc/api"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -77,7 +77,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	rootCmd.AddCommand(updateCmd)
+	liffCmd.AddCommand(updateCmd)
 	updateCmd.PersistentFlags().StringP("description", "d", "", "you can descript about its LIFF app")
 	updateCmd.PersistentFlags().StringP("type", "t", "full", "size of LIFF app. you can select full|tall|compact")
 	updateCmd.PersistentFlags().BoolP("ble", "b", false, "enable LINE Things")

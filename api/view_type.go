@@ -1,4 +1,4 @@
-package liff
+package api
 
 import (
 	"encoding/json"

@@ -1,4 +1,4 @@
-// Copyright © 2018 henzai ry0chord@gmail.com
+// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,18 +15,15 @@
 package cmd
 
 import (
-	"os"
+	"fmt"
 
-	"github.com/henzai/liffc/api"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"github.com/olekukonko/tablewriter"
 )
 
-// listCmd represents the list command
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List LIFF apps",
+// thingsCmd represents the things command
+var thingsCmd = &cobra.Command{
+	Use:   "things",
+	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -34,27 +31,20 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		lineAccessToken := viper.GetString("line_access_token")
-		if lineAccessToken == "" {
-			cmd.Println(NO_LINE_ACCESS_TOKEN)
-			os.Exit(1)
-		}
-		c := liff.NewClient(lineAccessToken)
-		apps, err := c.List()
-		if err != nil {
-			cmd.Println(err)
-			os.Exit(1)
-		}
-		data := apps.StringArray()
-		table := tablewriter.NewWriter(cmd.OutOrStdout())
-		table.SetHeader([]string{"liffId", "description", "type", "url", "ble"})
-		for _, v := range data {
-			table.Append(v)
-		}
-		table.Render()
+		fmt.Println("things called")
 	},
 }
 
 func init() {
-	liffCmd.AddCommand(listCmd)
+	rootCmd.AddCommand(thingsCmd)
+
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// thingsCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// thingsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
